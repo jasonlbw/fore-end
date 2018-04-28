@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		var html = '<p><img src="/notice/downLoadFile?fileKey=T1sNKTB7Yg1RCvBVdK&companyId=6" alt="Lighthouse.jpg"/></p><p><br/></p><p>6875687786</p><p><img src="/notice/downLoadFile?fileKey=T1.E_TBgEg1RCvBVdK&companyId=6" alt="Koala.jpg"/></p>';
+		var reg = /(<img[^>]+src\s*=\s*[\'\"])([^>"']+)([\'\"][^>]+>)/gim;
+		var list = html.match(reg);
+		console.log(list)
+		var temp = html.replace(reg, function (a,b,c,d,e,f) {
+			console.log(a,b,c,d,e,f);
+			return b + c + '&noticeId=10' + d;
+		});
+		console.log(temp);
+	</script>
+</body>
+</html>

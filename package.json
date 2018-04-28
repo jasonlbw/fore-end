@@ -1,0 +1,20 @@
+{
+  "name": "fore-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Node.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasonlbw/fore-end.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jasonlbw/fore-end/issues"
+  },
+  "homepage": "https://github.com/jasonlbw/fore-end#readme"
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>斐波那契基础->变种</title>
+</head>
+<body>
+	<script>
+		var countA = 0,
+				countB = 0,
+				countC = 0,
+				countD = 0;
+		function fibonacciA (n) {
+			countA++;
+			return n < 2 ? n : fibonacciA(n - 1) + fibonacciA(n - 2);
+		}
+		var fibonacciB = (function () {
+			var memo = [0, 1];
+			var fibo = function (n) {
+				countB++;
+				var res = memo[n];
+				if (typeof res !== 'number') {
+					res = fibo(n - 1) + fibo(n - 2);
+					memo[n] = res;
+				}
+				return res;
+			}
+			return fibo;
+		})();
+
+		console.log(fibonacciA(10), fibonacciB(10));
+		console.log(countA, countB);
+
+		var arr = [0, 1];
+		function fibonacciC (n) {
+			countC++;
+			var res = arr[n];
+			if (typeof res !== 'number') {
+				res = fibonacciC(n - 1) + fibonacciC(n - 2);
+				arr[n] = res;
+			}
+			return res;
+		}
+		console.log(fibonacciC(10), countC);
+
+
+		var memory = [0, 1];
+		function memoizer (memo, formula) {
+			var fibo = function (n) {
+				countD++;
+				var res = memo[n];
+				if (Object.prototype.toString.call(res) !== '[object Number]') {
+					res = formula(fibo, n);
+					memo[n] = res;
+				}
+				return res;
+			}
+			return fibo;
+		}
+		var fibonacciD = memoizer(memory, function (fibo, n) {
+			return fibo(n - 1) + fibo(n - 2);
+		});
+
+		console.log(fibonacciD(10), countD);
+		console.log(memory);
+		memory = null;
+		console.log(memory);
+	</script>
+</body>
+</html>

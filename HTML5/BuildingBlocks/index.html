@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+	<title>俄罗斯方块</title>
+	<link rel="stylesheet" href="./static/css/style.css">
+</head>
+<body>
+	<div class="container">
+		<h3 class="title">俄罗斯方块</h3>
+		<!-- 游戏区域 -->
+		<div class="game" id="game"></div>
+		<!-- 记录区域 -->
+		<div class="record">
+			<div id="next" class="next"></div>
+			<div class="record-info">
+				<div class="info">已用时：<span id="time">39</span>秒</div>
+				<div class="info">已得分：<span id="score">0</span>分</div>
+				<div class="info gameover" id="result"></div>
+			</div>
+		</div>
+		<!-- 操作说明 -->
+		<div class="click">
+			<div id="new" class="btn">NEW</div>
+			<div id="up" class="btn">U</div>
+			<div id="left" class="btn">L</div>
+			<div id="right" class="btn">R</div>
+			<div id="down" class="btn">D</div>
+			<div id="fall" class="btn">FALL</div>
+		</div>
+		<ul class="tips">
+			<li>移动端可通过右侧按钮控制游戏</li>
+			<li>桌面端可通过键盘的方向键来控制游戏，空格键为坠落</li>
+		</ul>
+	</div>
+	<script src="./static/js/dom.js"></script>
+	<script src="./static/js/square.js"></script>
+	<script src="./static/js/squareFactory.js"></script>
+	<script src="./static/js/game.js"></script>
+	<script src="./static/js/local.js"></script>
+	<script src="./static/js/index.js"></script>
+</body>
+</html>

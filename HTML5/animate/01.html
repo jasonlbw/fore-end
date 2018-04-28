@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>requestAnimationFrame</title>
+	<style type="text/css">
+		html, body {
+			margin: 0;
+			padding: 0;
+		}
+		.test {
+			width: 1px;
+			height: 18px;
+			background-color: #0F0;
+		}
+	</style>
+</head>
+<body>
+	<div class="test" id="test">0%</div>
+	<input type="button" value="启动" id="run" />
+	<script type="text/javascript">
+		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+		var start = null,
+			 process = 0,
+			 run = document.getElementById('run'),
+			 ele = document.getElementById('test');
+		function step() {
+			if(process >= 100) {
+				return false;
+			}
+			process += 1;
+			ele.style.width = ele.innerHTML = process + '%';
+			if(process < 100) {
+				requestAnimationFrame(step);
+			}
+		}
+		run.onclick = function () {
+			requestAnimationFrame(step);
+		}
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app"></div>
+	<script type="text/javascript">
+		var worker = new Worker('02.js');
+		setInterval((function () {
+			return function () {
+				worker.postMessage({
+					'name': 'melon'
+				})
+			}
+		})(), 1000);
+		worker.onmessage = function (e) {
+			document.getElementById('app').innerHTML = e.data;
+			worker.terminate();
+		}
+	</script>
+</body>
+</html>

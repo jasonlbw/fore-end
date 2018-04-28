@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>无限加下去的函数TODO</title>
+</head>
+<body>
+	<script>
+		function add (num) {
+			var sum = 0;
+
+			return function () {
+				sum += num;
+				return add;
+			}
+		}
+	</script>
+</body>
+</html>

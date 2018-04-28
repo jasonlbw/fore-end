@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<input v-model="text" type="text" />
+		{{ text }}
+	</div>
+	<script type="text/javascript">
+	(function () {
+		function Vue (options) {
+			this.data = options.data;
+			observe(this.data);
+			var id = options.el,
+				 root = document.getElementById(id),
+				 dom = nodeToFragment(root, this.data);
+
+			// 把编译(附带绑定)之后的内容追加回页面
+			root.appendChild(dom);
+		}
+		function nodeToFragment (root ,vm) {
+			var child = null,
+				 frag = document.createDocumentFragment();
+			while(child = root.firstChild) {
+				compile(child, vm);
+				frag.appendChild(child);
+			}
+			return frag;
+		}
+		function compile (node, vm) {
+			var nodeType = node.nodeType,				 
+				 reg = /\{\{([^{}]*)\}\}/g;
+			if (nodeType === 1) { // 元素节点
+				var i = 0,
+					 key = '',
+					 attr = null,
+					 attrs = node.attributes,
+					 length = attrs.length;
+				for (; i < length; i++) {
+					attr = attrs[i];
+					if (attr.nodeName !== 'v-model') {
+						continue;
+					}
+					key = attr.nodeValue;
+					node.value = vm[key];
+					node.addEventListener('input', function(e) {
+						e = e || window.event;
+						vm[key] = e.target.value;
+					});
+				}
+				node.removeAttribute('v-model');
+			} else if (nodeType === 3) { // 文本节点
+				if (reg.test(node.nodeValue)) {
+					var key = RegExp.$1.trim();
+					node.nodeValue = vm[key];
+					new Watcher(vm, node, key);
+				}
+			}
+		}
+		function defineReactive (obj, key, val) {
+			var dep = new Dep();
+			Object.defineProperty(obj, key, {
+				get: function () {
+					if(Dep.target) {
+						dep.addSub(Dep.target);
+					}
+					return val;
+				},
+				set: function (newVal) {
+					if(val === newVal) {
+						return;
+					}
+					val = newVal;
+					dep.notify();
+				}
+			})
+		}
+		function observe (obj) {
+			Object.keys(obj).forEach(function(key) {
+				defineReactive(obj, key, obj[key]);
+			});
+		}
+
+		function Dep () {
+			this.subs = [];
+		}
+		Dep.prototype = {
+			addSub: function (sub) {
+				this.subs.push(sub);
+			},
+			notify: function () {
+				this.subs.forEach(function (sub) {
+					sub.update();
+				})
+			}
+		};
+		function Watcher (vm, node, name) {
+			Dep.target = this;
+			this.node = node;
+			this.name = name;
+			this.vm = vm;
+			this.update();
+			Dep.target = null;
+		}
+		Watcher.prototype = {
+			update: function () {
+				this.value = this.vm[this.name];
+				this.node.nodeValue = this.value;
+			}
+		};
+
+		var vm = new Vue({
+			el: 'app',
+			data: {
+				text: 'hello world'
+			}
+		})
+	})();
+	</script>
+</body>
+</html>

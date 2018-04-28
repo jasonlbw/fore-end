@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<blockquote cite="https://www.baidu.com">
+		<p>百度一下，你就知道</p>
+	</blockquote>
+	<blockquote cite="https://www.google.com">
+		<p>谷歌一下，你就知道</p>
+	</blockquote>
+	<script type="text/javascript">
+		(function displayCitations () {
+			if (!document.getElementsByTagName) {
+				return false;
+			}
+			if (!document.createElement) {
+				return false;
+			}
+			if (!document.createTextNode) {
+				return false;
+			}
+			var quotes = document.getElementsByTagName('blockquote');
+			for (var i = 0, length = quotes.length; i < length; i++) {
+				var quote = quotes[i],
+					 url = quote.getAttribute('cite'),
+					 elem = quote.getElementsByTagName('*');
+				if (!url || elem.length < 1) {
+					continue;
+				}
+				var link = document.createElement('a'),
+					 linkText = document.createTextNode('source'),
+					 sup = document.createElement('sup');
+				link.appendChild(linkText);
+				link.href = url;
+				sup.appendChild(link);
+				elem[elem.length - 1].appendChild(sup);
+			}
+		})();
+	</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<div id="a"></div>
+		<div id="b"></div>
+	</div>
+	<script type="text/javascript">
+		(function () {
+			var b = document.getElementById('b');
+			var c = document.createElement('div');
+
+			b.parentNode.insertBefore(c, b.nextSibling);
+		})();
+	</script>
+</body>
+</html>

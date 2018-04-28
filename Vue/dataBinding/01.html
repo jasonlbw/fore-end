@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>simple数据双向绑定</title>
+</head>
+<body>
+	<input type="text" id="txt" />
+	<span style="margin-left: 10px;" id="view"></span>
+	<script type="text/javascript">
+		function $(id) {
+			return document.getElementById(id);
+		}
+		var obj = {},
+			 txtEle = $('txt'),
+			 viewEle = $('view');
+		Object.defineProperty(obj, 'hello', {
+			set: function (val) {
+				viewEle.innerText = val;
+			}
+		});
+		txtEle.onkeyup = function (e) {
+			e = e || window.event;
+			obj.hello = e.target.value;
+		}
+	</script>
+</body>
+</html>

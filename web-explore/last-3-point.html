@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>last-3-point</title>
+</head>
+<body>
+	<script type="text/javascript">
+		var num = '289932434287.02678';
+		function valid (num) {
+			var temp = parseFloat(num);
+			if (isNaN(temp)) {
+				console.warn('num must can be convert to a number');
+				return false;
+			}
+			return true
+		}
+		
+		function simple (num) {
+			if (!valid(num)) {
+				return num;
+			}
+			return parseFloat(num).toLocaleString();
+		}
+		console.log(simple(num));
+		
+		function medium (num) {
+			if (!valid(num)) {
+				return num;
+			}
+			var nums = num.toString().split('.'),
+				  left = nums[0],
+				  right = nums.length > 1 ? ('.' + nums[1]) : '',
+				  reg = /(\d+)(\d{3})/g;
+			while (reg.test(left)) {
+				left = left.replace(reg, '$1,$2');
+			}
+			return left + right;
+		}
+		console.log(medium(num));
+
+		function difficult (num) {
+			if (!valid(num)) {
+				return num;
+			}
+			var nums = num.split('.'),
+					left = nums[0],
+					right = nums.length > 1 ? ('.' + nums[1]) : '';
+			return left.split('').reverse().join('').replace(/(\d{3})\B/g, '$1,').split('').reverse().join('') + right;
+		}
+		console.log(difficult(num));
+	</script>
+</body>
+</html>

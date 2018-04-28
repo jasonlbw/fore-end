@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>五子棋</title>
+	<style type="text/css">
+		html, body {
+			margin: 0;
+			padding: 0;
+		}
+		.title_wrap {
+			width: 80%;
+			margin: 0 auto 20px auto;
+			text-align: center;
+			border-bottom: 1px solid #999;
+			-webkit-user-select:none;
+			-moz-user-select:none;
+			-ms-user-select:none;
+			user-select:none;
+		}
+		.title {
+			margin-top: 20px;
+			font-size: 20px;
+		}
+		.reset {
+			margin: 20px auto;
+		}
+		.restart {
+			width: 90px;
+			height: 30px;
+			border: 1px solid #d9dadc;
+			border-radius: 3px;
+			background-color: #FFF;
+			color: #666;
+			cursor: pointer;
+			outline: none;
+		}
+		.restart:hover {
+			color: #419CE3;
+			border-color: #419CE3;
+		}
+		.chess {
+			display: block;
+			margin: 0 auto;
+			cursor: pointer;
+			box-shadow: -2px -2px 2px #EFEFEF, 5px 5px 5px #B9B9B9;
+		}
+		.result {
+			color: red;
+			padding-top: 30px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div class="title_wrap">
+		<div class="title">五子棋</div>
+		<div class="reset">
+			<button id="restart" class="restart">重新开始</button>
+		</div>
+	</div>
+	<div class="content">
+		<canvas id="chess" class="chess" width="450px" height="450px">当前浏览器暂不支持canvas</canvas>
+	</div>
+	<div id="result" class="result"></div>
+	<script type="text/javascript">
+		(function () {
+			var melon = {};
+			melon.$ = function (selector) {
+				return document.querySelector(selector);
+			}
+			melon.addEventListener = function (dom, type, cb) {
+				if(!dom || !type) {
+					return false;
+				}
+				if (document.addEventListener) {
+					dom.addEventListener(type, cb);
+				} else if (document.attachEvent) {
+					dom.attachEvent('on' + type, cb);
+				} else {
+					dom['on' + type] = cb;
+				}
+			}
+
+			window.melon = melon;
+		})();
+		window.onload = function () {
+			var over = false;
+			var chess = melon.$('#chess');
+			var result = melon.$('#result');
+			var restart = melon.$('#restart');
+			var context = chess.getContext('2d');
+			drawChessBoard();
+
+			melon.addEventListener(restart, 'click', function () {
+				location.reload();
+			});
+
+			// 画棋盘
+			function drawChessBoard () {
+				context.strokeStyle = '#BFBFBF';
+				for(var i = 0; i < 15; i++) {
+					var temp = 15 + i * 30;
+					// 画竖线
+					context.moveTo(temp, 15);
+					context.lineTo(temp, 435);
+					context.stroke();
+
+					// 画横线
+					context.moveTo(15, temp);
+					context.lineTo(435, temp);
+					context.stroke();
+				}
+			}
+
+			// 绘制棋子
+			function oneStep (i, j, me) {
+				var iPos = 15 + i * 30;
+				var jPos = 15 + j * 30;
+				context.beginPath();
+				context.arc(iPos, jPos, 13, 0, 2 * Math.PI);
+				context.closePath();
+				var gradient = context.createRadialGradient(iPos + 2, jPos - 2, 13, iPos + 2, jPos -2, 0);
+				if(me) {
+					gradient.addColorStop(0, '#0A0A0A');
+					gradient.addColorStop(1, '#636766');
+				} else {
+					gradient.addColorStop(0, '#D1D1D1');
+					gradient.addColorStop(1, '#F9F9F9');
+				}
+				context.fillStyle = gradient;
+				context.fill();
+			}
+
+			// 赢法数组
+			var wins = [];
+			// 记录位置是否落子
+			var chessPieces = [];
+			for(var i = 0; i < 15; i++) {
+				wins[i] = [];
+				chessPieces[i] = [];
+				for(var j = 0; j < 15; j++) {
+					wins[i][j] = [];
+					chessPieces[i][j] = 0;
+				}
+			}
+
+			// 检测某个位置是否有棋子
+			function hasChessPiece (i, j) {
+				if(chessPieces[i][j] === 0) {
+					return false;
+				}
+				return true;
+			}
+
+			var count = 0;
+			// 记录所有竖线和横线的赢法
+			for(var i = 0; i < 15; i++) {
+				for(var j = 0; j < 11; j++) {
+					
+					for(var k = 0; k < 5; k++) {
+						// 记录所有竖线的赢法
+						wins[i][j + k][count] = true;
+						// 记录所有横线的赢法
+						wins[j + k][i][count + 1] = true;
+					}
+					count += 2;
+				}
+			}
+			// 记录右下斜线和左下斜线的赢法
+			for(var i = 0; i < 11; i++) {
+				// 记录右下斜线的赢法
+				for(var j = 0; j < 11; j++) {
+					for(var k = 0; k < 5; k++) {
+						wins[i + k][j + k][count] = true;
+					}
+					count++;
+				}
+				// 记录左下斜线的赢法
+				for(var m = 14; m > 3; m--) {
+					for(var n = 0; n < 5; n++) {
+						wins[i + n][m - n][count] = true;
+					}
+					count++;
+				}
+			}
+
+			console.log(count);
+
+
+
+
+			var flag = true;
+			var chessWin = [];
+			var masterWin = [];
+			for(var k = 0; k < count; k++) {
+				chessWin[k] = 0;
+				masterWin[k] = 0;
+			}
+			melon.addEventListener(chess, 'click', function (e) {
+				var x = e.offsetX,
+					 y = e.offsetY,
+					 i = Math.floor(x / 30),
+					 j = Math.floor(y / 30);
+				if(over) {
+					return false;
+				}
+				if(!flag) {
+					return false;
+				}
+				// 检测当前位置是否有棋子
+				if(hasChessPiece(i, j)) {
+					return false;
+				}
+				oneStep(i, j, flag);
+				chessPieces[i][j] = 1;
+				for(var k = 0; k < count; k++) {
+					if(!wins[i][j][k]) {
+						continue;
+					}
+					chessWin[k] += 1;
+					masterWin[k] = 6;
+					if(chessWin[k] === 5) {
+						result.innerHTML = '你赢了！';
+						over = true;
+						break;
+					}
+				}
+				if(!over) {
+					flag = !flag;
+					masterAI();
+				}
+			});
+
+			// 计算机下棋逻辑
+			function masterAI () {
+				var chessScore = [],
+				    masterScore = [],
+				    max = 0,
+				    u = 0,
+				    v = 0;
+				//初始化棋盘每个位置的得分
+				for(var i = 0; i < 15; i++) {
+					chessScore[i] = [];
+					masterScore[i] = [];
+					for(var j = 0; j < 15; j++) {
+						chessScore[i][j] = 0;
+						masterScore[i][j]= 0;
+					}
+				}
+				// 核心算法
+				for(var i = 0; i < 15; i++) {
+					for(var j = 0; j < 15; j++) {
+						if(chessPieces[i][j] > 0) {// 当前位置有棋子
+							continue;
+						}
+						for(var k = 0; k < count; k++) {
+							if(!wins[i][j][k]) {
+								continue;
+							}
+							if(chessWin[k] === 1) {
+								chessScore[i][j] += 200;
+							} else if(chessWin[k] === 2) {
+								chessScore[i][j] += 400;
+							} else if(chessWin[k] === 3) {
+								chessScore[i][j] += 2000;
+							} else if(chessWin[k] === 4) {
+								chessScore[i][j] += 10000;
+							}
+
+							if(masterWin[k] === 1) {
+								masterScore[i][j] += 220;
+							} else if(masterWin[k] === 2) {
+								masterScore[i][j] += 420;
+							} else if(masterWin[k] === 3) {
+								masterScore[i][j] += 2100;
+							} else if(masterWin[k] === 4) {
+								masterScore[i][j] += 20000;
+							}
+						}
+						if(chessScore[i][j] > max) {
+							max = chessScore[i][j];
+							u = i;
+							v = j;
+						}
+						if(masterScore[i][j] > max) {
+							max = masterScore[i][j];
+							u = i;
+							v = j;
+						}
+					}
+				}
+				oneStep(u, v, flag);
+				chessPieces[u][v] = 2;
+				for(var m = 0; m < count; m++) {
+					if(!wins[u][v][m]) {
+						continue;
+					}
+					masterWin[m]++;
+					chessWin[m] = 6;
+					if(masterWin[m] === 5) {
+						result.innerHTML = '你输了！';
+						over = true;
+						break;
+					}
+				}
+				flag = !flag;
+			}
+		}
+	</script>
+</body>
+</html>
